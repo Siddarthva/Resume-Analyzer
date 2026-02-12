@@ -303,7 +303,7 @@ const App = () => {
         </div>
         
         <footer className="mt-12 text-center text-slate-400 text-[10px] font-medium tracking-widest uppercase">
-          Client-Side Skill Analysis Enabled • SBERT Embedding Ready
+          Made by @Siddarth_V_Acharya
         </footer>
       </div>
     </div>
