@@ -160,8 +160,3 @@ def predict(req: PredictionRequest):
         }
     }
 
-if __name__ == "__main__":
-    import uvicorn
-    # Render provides PORT env var
-    port = int(os.getenv("PORT", 8000))
-    uvicorn.run("app:app", host="0.0.0.0", port=port)

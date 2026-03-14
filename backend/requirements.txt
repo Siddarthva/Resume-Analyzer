@@ -5,9 +5,8 @@ numpy
 scikit-learn
 xgboost
 sentence-transformers
-torch
+torch --index-url https://download.pytorch.org/whl/cpu
 python-dotenv
 pdfplumber
 python-docx
 python-multipart
--f https://download.pytorch.org/whl/torch_stable.html
