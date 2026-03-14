@@ -70,11 +70,15 @@ npm run dev
 1. Create a new **Web Service** on [Render](https://render.com/).
 2. Connect your GitHub repository.
 3. Set **Runtime** to `Python 3`.
-4. **Build Command**: `pip install -r requirements.txt`
+4. **Build Command**: `pip install -r requirements.txt && python download_model.py`
 5. **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
 6. Add **Environment Variables**:
    - `FRONTEND_URL`: Your Vercel app URL (e.g., `https://resume-analyser.vercel.app`)
-   - `PORT`: `8000`
+   - `PYTHON_VERSION`: `3.9` (or higher)
+
+### ⚡ Performance Optimization
+To prevent the Render free tier from sleeping, you can set up a "cron" or GitHub Action to ping the health endpoint every 14 minutes:
+`https://resume-analyzer-pwkc.onrender.com/health`
 
 ### Frontend (Vercel)
 1. Import your project into [Vercel](https://vercel.com/).

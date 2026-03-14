@@ -55,6 +55,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from functools import lru_cache
+
+# ======================================================
+# CACHED ENCODING
+# ======================================================
+
+@lru_cache(maxsize=128)
+def get_embedding(text):
+    return sbert.encode([text])
+
 # ======================================================
 # SCHEMAS & UTILS
 # ======================================================
@@ -95,8 +105,9 @@ def extract_skills(text):
 # ======================================================
 
 @app.get("/")
-def root():
-    return {"status": "API running", "model_loaded": model is not None}
+@app.get("/health")
+def health():
+    return {"status": "alive", "model_loaded": model is not None}
 
 @app.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
@@ -132,9 +143,9 @@ def predict(req: PredictionRequest):
     resume = clean(req.resume_text)
     jd = clean(req.jd_text)
 
-    # Features
-    resume_emb = sbert.encode([resume])
-    jd_emb = sbert.encode([jd])
+    # Features (Using Cache)
+    resume_emb = get_embedding(resume)
+    jd_emb = get_embedding(jd)
 
     v = tfidf.transform([resume, jd])
     sim_score = cosine_similarity(v[0], v[1])[0][0]
