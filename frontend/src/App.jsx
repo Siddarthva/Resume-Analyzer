@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Briefcase, 
   FileText, 
@@ -10,44 +10,54 @@ import {
   ArrowRight,
   RotateCcw,
   Zap,
-  Target
+  Target,
+  Upload,
+  FileCode
 } from 'lucide-react';
+
+// Use production API if available
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const App = () => {
   const [resumeText, setResumeText] = useState('');
   const [jdText, setJdText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [parsing, setParsing] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
 
-  // Simple client-side skill extraction
-  const extractSkills = (text) => {
-    if (!text) return new Set();
-    // A basic list of common tech keywords to filter against
-    const commonSkills = [
-      'python', 'javascript', 'react', 'node', 'java', 'aws', 'docker', 'sql', 'nosql', 
-      'machine learning', 'data science', 'flask', 'fastapi', 'typescript', 'c++', 
-      'kubernetes', 'agile', 'scrum', 'git', 'ci/cd', 'linux', 'azure', 'gcp', 
-      'tensorflow', 'pytorch', 'scikit-learn', 'pandas', 'numpy', 'tableau', 'powerbi'
-    ];
-    
-    const words = text.toLowerCase().split(/[\s,./()]+/).map(w => w.trim());
-    return new Set(commonSkills.filter(skill => 
-      skill.includes(' ') 
-        ? text.toLowerCase().includes(skill) // check multi-word skills
-        : words.includes(skill)
-    ));
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setParsing(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/extract-text`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.detail || 'Failed to parse file');
+      }
+
+      const data = await response.json();
+      setResumeText(data.text);
+    } catch (err) {
+      setError(`File Error: ${err.message}`);
+    } finally {
+      setParsing(false);
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
-
-  const skillAnalysis = useMemo(() => {
-    const resumeSkills = extractSkills(resumeText);
-    const jdSkills = extractSkills(jdText);
-    
-    const matched = Array.from(jdSkills).filter(skill => resumeSkills.has(skill));
-    const missing = Array.from(jdSkills).filter(skill => !resumeSkills.has(skill));
-    
-    return { matched, missing };
-  }, [resumeText, jdText]);
 
   const handlePredict = async () => {
     if (!resumeText.trim() || !jdText.trim()) {
@@ -60,7 +70,7 @@ const App = () => {
     setResult(null);
 
     try {
-      const response = await fetch('http://localhost:8000/predict', {
+      const response = await fetch(`${API_BASE_URL}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,10 +79,13 @@ const App = () => {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to connect to the prediction server.');
-
       const data = await response.json();
-      setResult(data.probability);
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to connect to the prediction server.');
+      }
+
+      setResult(data);
     } catch (err) {
       setError(err.message || 'An unexpected error occurred.');
     } finally {
@@ -125,31 +138,53 @@ const App = () => {
           <p className="text-lg text-slate-600">
             Intelligent Resume-to-Job matching powered by SBERT & XGBoost
           </p>
+          <div className="mt-4 flex justify-center gap-4">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <FileCode className="w-3 h-3 mr-1" /> Vercel + Render Deployment Ready
+            </span>
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
           <div className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Resume Input */}
+              {/* Resume Input Area */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="flex items-center text-sm font-semibold text-slate-700 uppercase tracking-wider">
                     <FileText className="w-4 h-4 mr-2 text-blue-500" />
                     Resume
                   </label>
-                  <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
-                    {resumeText.length} chars
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileUpload} 
+                      className="hidden" 
+                      accept=".pdf,.docx,.txt"
+                    />
+                    <button 
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={parsing}
+                      className="text-[10px] flex items-center gap-1 font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded transition-colors"
+                    >
+                      {parsing ? <Loader2 className="w-3 h-3 animate-spin"/> : <Upload className="w-3 h-3" />}
+                      UPLOAD
+                    </button>
+                    <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                      {resumeText.length} chars
+                    </span>
+                  </div>
                 </div>
                 <textarea
-                  className="w-full h-64 p-4 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none placeholder:text-slate-400"
-                  placeholder="Paste candidate's resume..."
+                  className="w-full h-80 p-4 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none placeholder:text-slate-400"
+                  placeholder="Paste resume content here or use the upload button for PDF/DOCX..."
                   value={resumeText}
                   onChange={(e) => setResumeText(e.target.value)}
                 />
               </div>
 
-              {/* JD Input */}
+              {/* JD Input Area */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <label className="flex items-center text-sm font-semibold text-slate-700 uppercase tracking-wider">
@@ -161,8 +196,8 @@ const App = () => {
                   </span>
                 </div>
                 <textarea
-                  className="w-full h-64 p-4 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none placeholder:text-slate-400"
-                  placeholder="Paste target job description..."
+                  className="w-full h-80 p-4 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none placeholder:text-slate-400"
+                  placeholder="Paste target job description here..."
                   value={jdText}
                   onChange={(e) => setJdText(e.target.value)}
                 />
@@ -173,7 +208,7 @@ const App = () => {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={handlePredict}
-                disabled={loading}
+                disabled={loading || parsing}
                 className={`group flex items-center justify-center px-10 py-4 text-lg font-bold text-white rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg ${
                   loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200'
                 }`}
@@ -201,24 +236,24 @@ const App = () => {
             </div>
 
             {error && (
-              <div className="mt-6 flex items-center p-4 text-rose-800 bg-rose-50 rounded-lg border border-rose-100 animate-bounce">
+              <div className="mt-6 flex items-center p-4 text-rose-800 bg-rose-50 rounded-lg border border-rose-100 animate-in fade-in zoom-in duration-300">
                 <AlertCircle className="w-5 h-5 mr-2" />
                 <span className="text-sm font-medium">{error}</span>
               </div>
             )}
 
             {/* Results Display */}
-            {result !== null && (
+            {result && (
               <div className={`mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500`}>
-                <div className={`p-8 rounded-2xl border-2 ${getStatus(result).bg} ${getStatus(result).border}`}>
+                <div className={`p-8 rounded-2xl border-2 ${getStatus(result.probability).bg} ${getStatus(result.probability).border}`}>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-10">
                     <div className="flex-1 space-y-4">
                       <div>
                         <p className="text-xs font-bold tracking-[0.2em] text-slate-500 mb-1">SCORE REPORT</p>
                         <div className="flex items-center">
-                          {getStatus(result).icon}
-                          <h2 className={`ml-2 text-3xl font-black tracking-tight ${getStatus(result).color}`}>
-                            {getStatus(result).label}
+                          {getStatus(result.probability).icon}
+                          <h2 className={`ml-2 text-3xl font-black tracking-tight ${getStatus(result.probability).color}`}>
+                            {getStatus(result.probability).label}
                           </h2>
                         </div>
                       </div>
@@ -231,8 +266,14 @@ const App = () => {
                           <span>Strong</span>
                         </div>
                         <div className="h-4 w-full bg-slate-200 rounded-full overflow-hidden flex">
-                          <div className={`h-full transition-all duration-1000 ${getStatus(result).fill}`} style={{ width: `${result}%` }} />
+                          <div 
+                            className={`h-full transition-all duration-1000 ${getStatus(result.probability).fill}`} 
+                            style={{ width: `${result.probability}%` }} 
+                          />
                         </div>
+                        <p className="text-[10px] text-slate-500 italic">
+                          Semantic similarity: {result.analysis.semantic_similarity}%
+                        </p>
                       </div>
                     </div>
 
@@ -247,12 +288,12 @@ const App = () => {
                           strokeWidth="10"
                           fill="transparent"
                           strokeDasharray={364}
-                          strokeDashoffset={364 - (364 * result) / 100}
-                          className={`${getStatus(result).color} transition-all duration-1000 ease-out`}
+                          strokeDashoffset={364 - (364 * result.probability) / 100}
+                          className={`${getStatus(result.probability).color} transition-all duration-1000 ease-out`}
                         />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-3xl font-black text-slate-800 leading-none">{Math.round(result)}%</span>
+                        <span className="text-3xl font-black text-slate-800 leading-none">{Math.round(result.probability)}%</span>
                         <span className="text-[10px] font-bold text-slate-500 uppercase mt-1">Match</span>
                       </div>
                     </div>
@@ -266,8 +307,8 @@ const App = () => {
                         Matched Skills
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {skillAnalysis.matched.length > 0 ? (
-                          skillAnalysis.matched.map(skill => (
+                        {result.analysis.matched_skills.length > 0 ? (
+                          result.analysis.matched_skills.map(skill => (
                             <span key={skill} className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-lg border border-emerald-200">
                               {skill}
                             </span>
@@ -284,8 +325,8 @@ const App = () => {
                         Missing Skills
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {skillAnalysis.missing.length > 0 ? (
-                          skillAnalysis.missing.map(skill => (
+                        {result.analysis.missing_skills.length > 0 ? (
+                          result.analysis.missing_skills.map(skill => (
                             <span key={skill} className="px-3 py-1 bg-rose-50 text-rose-600 text-xs font-medium rounded-lg border border-rose-100">
                               {skill}
                             </span>
@@ -303,7 +344,7 @@ const App = () => {
         </div>
         
         <footer className="mt-12 text-center text-slate-400 text-[10px] font-medium tracking-widest uppercase">
-          Made by @Siddarth_V_Acharya
+          Production Environment • @Siddarth_V_Acharya
         </footer>
       </div>
     </div>
