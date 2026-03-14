@@ -9,4 +9,5 @@ torch
 python-dotenv
 pdfplumber
 python-docx
+python-multipart
 -f https://download.pytorch.org/whl/torch_stable.html
