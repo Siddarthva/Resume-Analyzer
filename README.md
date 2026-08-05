@@ -280,7 +280,26 @@ Sample Response
     "missing_skills": []
   }
 }
-```
+---
+
+# 🌐 Live Demo
+
+Experience the application without any local setup.
+
+### 🚀 Resume Analyzer Pro
+
+**Live Website:**  
+👉 https://resume-analyzer-five-chi.vercel.app
+
+### ⚙️ Backend API
+
+https://resume-analyzer-backend-irzd.onrender.com
+
+### ❤️ Health Check
+
+https://resume-analyzer-backend-irzd.onrender.com/health
+
+> **Note:** The backend is hosted on Render's free tier. If the service has been idle, the first request may take **30–60 seconds** while the server wakes up.
 
 ---
 
