@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Tests
+.pytest_cache/
+
+# Logs
+*.log
+
+# Frontend
+../frontend
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+
+# Local environment
+.env
