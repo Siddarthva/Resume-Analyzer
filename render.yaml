@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: resume-analyzer-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free

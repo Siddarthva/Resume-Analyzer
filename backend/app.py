@@ -19,7 +19,8 @@ except Exception as exc:
     raise RuntimeError(f"Could not load ML assets: {exc}") from exc
 
 app = FastAPI(title="Resume Analyzer API")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "*").rstrip("/")
+print(f"FRONTEND_URL = {FRONTEND_URL}")
 allowed_origins = [FRONTEND_URL] if FRONTEND_URL != "*" else ["*"]
 
 app.add_middleware(
