@@ -74,3 +74,23 @@ Thumbs.db
 *.tmp
 *.bak
 *.swp
+
+# Python
+.venv/
+venv/
+env/
+ENV/
+ATS/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Build
+dist/
+
+# Environment
+.env
