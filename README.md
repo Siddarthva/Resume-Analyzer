@@ -1,115 +1,314 @@
-# Resume Analyser Pro 🚀
+# 🚀 Resume Analyzer Pro
 
-Resume Analyser Pro is an AI-powered talent acquisition tool that intelligently matches resumes to job descriptions using **SBERT (Sentence-BERT)** for semantic understanding and **XGBoost** for match probability scoring. It supports direct text input as well as **PDF** and **DOCX** file uploads.
+An AI-powered ATS Resume Analyzer that evaluates how well a resume matches a job description using Machine Learning and Semantic Similarity.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.9%2B-blue)
-![React](https://img.shields.io/badge/react-18%2B-blue)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB)
+![XGBoost](https://img.shields.io/badge/XGBoost-ML-orange)
+![SBERT](https://img.shields.io/badge/SentenceBERT-NLP-red)
+
+---
+
+## 📌 Overview
+
+Resume Analyzer Pro helps candidates understand how well their resume matches a target job description.
+
+The application combines:
+
+- Semantic NLP using Sentence-BERT
+- TF-IDF Similarity
+- XGBoost Machine Learning
+- Resume Parsing
+- ATS Skill Gap Analysis
+- Section-wise Resume Evaluation
 
 ---
 
 ## ✨ Features
 
-- **Intelligent Matching**: Uses SBERT embeddings to compare the semantic meaning of resumes and JDs, rather than just keyword counting.
-- **Hybrid Scoring**: Combines TF-IDF cosine similarity with deep semantic embeddings processed through an XGBoost classifier.
-- **File Support**: Directly upload and parse `.pdf`, `.docx`, and `.txt` resumes.
-- **Skill Analysis**: Automatically identifies **Matched Skills** and **Missing Skills** in real-time.
-- **Responsive Dashboard**: Modern, interactive UI built with React and Tailwind CSS.
-- **Deployment Ready**: Optimized for Vercel (Frontend) and Render (Backend).
+- 📄 Resume Upload (PDF, DOCX, TXT)
+- 🤖 AI-powered ATS Match Prediction
+- 🧠 Sentence-BERT Semantic Embeddings
+- 📊 TF-IDF Similarity Analysis
+- 🎯 Skill Matching
+- ❌ Missing Skill Detection
+- 📂 Resume Parsing
+- 📈 Section-wise Resume Scores
+- 💡 Resume Improvement Suggestions
+- ⚡ FastAPI Backend
+- ⚛️ React + Vite Frontend
 
 ---
 
-## 🛠️ Tech Stack
+## 🏗 Architecture
 
-- **Frontend**: React.js, Vite, Tailwind CSS, Lucide Icons.
-- **Backend**: FastAPI, Uvicorn, Python.
-- **ML/AI**: Sentence-Transformers (paraphrase-MiniLM-L3-v2), Scikit-learn, XGBoost, Joblib.
-- **Parsing**: pdfplumber, python-docx.
+```
+React Frontend
+        │
+        ▼
+Axios API
+        │
+        ▼
+FastAPI Backend
+        │
+        ├── Resume Parser
+        ├── Skill Extraction
+        ├── Section Scoring
+        ├── TF-IDF Similarity
+        ├── Sentence-BERT
+        └── XGBoost Prediction
+                │
+                ▼
+         Structured JSON Response
+```
 
 ---
 
-## 🚀 Local Setup
+## 🛠 Tech Stack
 
-### 1. Clone the Repository
+### Frontend
+
+- React
+- Vite
+- Axios
+- Tailwind CSS
+- Lucide Icons
+
+### Backend
+
+- FastAPI
+- Python
+- pdfplumber
+- python-docx
+- Joblib
+
+### Machine Learning
+
+- XGBoost
+- Sentence Transformers
+- TF-IDF
+- Scikit-Learn
+- NumPy
+
+---
+
+## 📂 Project Structure
+
+```
+Resume-Analyzer/
+
+backend/
+│
+├── app.py
+├── train_model.py
+├── download_model.py
+├── ats_model.pkl
+├── tfidf.pkl
+├── requirements.txt
+├── start.sh
+└── utils/
+
+frontend/
+│
+├── src/
+│   ├── services/
+│   ├── App.jsx
+│   └── main.jsx
+├── package.json
+└── vite.config.js
+
+README.md
+```
+
+---
+
+## 🚀 Installation
+
+### Clone
+
 ```bash
-git clone https://github.com/Siddarthva/Resume-Analyzer.git
+git clone https://github.com/YOUR_USERNAME/Resume-Analyzer.git
+
 cd Resume-Analyzer
 ```
 
-### 2. Backend Setup
+---
+
+## Backend
+
 ```bash
 cd backend
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install dependencies
-pip install -r requirements.txt
+python -m venv .venv
 
-# Run the server
-python app.py
+source .venv/bin/activate
 ```
-*The backend will run on `http://localhost:8000`*
 
-### 3. Frontend Setup
+Windows
+
+```powershell
+.venv\Scripts\activate
+```
+
+Install
+
 ```bash
-cd ../frontend
-# Install dependencies
+pip install -r requirements.txt
+```
+
+Run
+
+```bash
+uvicorn app:app --reload
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
 npm install
 
-# Run the development server
 npm run dev
 ```
-*The frontend will run on `http://localhost:5173`*
 
 ---
 
-## 🌐 Deployment Instructions
+## API Endpoints
 
-### Backend (Render)
-1. Create a new **Web Service** on [Render](https://render.com/).
-2. Connect your GitHub repository.
-3. Set **Runtime** to `Python 3`.
-4. **Build Command**: `pip install -r requirements.txt && python download_model.py`
-5. **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
-6. Add **Environment Variables**:
-   - `FRONTEND_URL`: Your Vercel app URL (e.g., `https://resume-analyser.vercel.app`)
-   - `PYTHON_VERSION`: `3.9` (or higher)
+### Health
 
-### ⚡ Performance Optimization
-To prevent the Render free tier from sleeping, you can set up a "cron" or GitHub Action to ping the health endpoint every 14 minutes:
-`https://resume-analyzer-pwkc.onrender.com/health`
-
-### Frontend (Vercel)
-1. Import your project into [Vercel](https://vercel.com/).
-2. Set the **Root Directory** to `frontend`.
-3. Set the **Framework Preset** to `Vite`.
-4. Add **Environment Variables**:
-   - `VITE_API_URL`: Your Render backend URL (e.g., `https://resume-analyser-api.onrender.com`)
+```
+GET /health
+```
 
 ---
 
-## ⚙️ Environment Variables
+### Extract Resume
 
-### Backend (`.env`)
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `FRONTEND_URL` | Allowed CORS origin | `*` |
-| `PORT` | Backend port | `8000` |
-| `MODEL_PATH` | Path to XGBoost model | `ats_model.pkl` |
+```
+POST /extract-text
+```
 
-### Frontend (`.env`)
-| Variable | Description |
-|----------|-------------|
-| `VITE_API_URL` | URL of the FastAPI backend |
+Supported
+
+- PDF
+
+- DOCX
+
+- TXT
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Predict ATS Match
+
+```
+POST /predict
+```
+
+Request
+
+```json
+{
+  "resume_text": "...",
+  "jd_text": "..."
+}
+```
+
+Response
+
+```json
+{
+  "probability": 93.2,
+
+  "analysis": {
+    "matched_skills": [],
+    "missing_skills": [],
+    "semantic_similarity": 36.7
+  }
+}
+```
+
+---
+
+## 📊 Sample Output
+
+- ATS Match Score
+- Semantic Similarity
+- Matched Skills
+- Missing Skills
+- Resume Information
+- Section Scores
+- Improvement Suggestions
+
+---
+
+## 🧠 Machine Learning Pipeline
+
+```
+Resume
+      │
+      ▼
+Cleaning
+      │
+      ▼
+Sentence-BERT Embeddings
+      │
+      ▼
+TF-IDF Similarity
+      │
+      ▼
+Feature Vector
+      │
+      ▼
+XGBoost
+      │
+      ▼
+ATS Match Prediction
+```
+
+---
+
+## 🌐 Deployment
+
+### Backend
+
+Render
+
+### Frontend
+
+Vercel
+
+---
+
+## 📈 Future Improvements
+
+- Resume Rewrite using LLMs
+- Better Resume Parser
+- Expanded Skill Database
+- Advanced ATS Formatting Checks
+- Multi-Resume Comparison
+- Interview Question Generation
+
+---
+
+## 👨‍💻 Author
+
+**Siddarth V Acharya**
+
+Computer Science (AI & ML)
+
+Sahyadri College of Engineering & Management
+
+GitHub: https://github.com/YOUR_USERNAME
+
+LinkedIn: https://linkedin.com/in/YOUR_PROFILE
+
+---
 
 ## 📄 License
-This project is licensed under the MIT License.
 
----
-**Made with ❤️ by [Siddarth V Acharya](https://github.com/Siddarthva)**
+MIT License

@@ -1,5 +1,76 @@
-ats_env/
+# ==========================
+# Python
+# ==========================
 __pycache__/
-node_modules/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
 
-*.pyc
+# ==========================
+# Environment Variables
+# ==========================
+.env
+*.env
+
+# ==========================
+# Model Files (Keep if deploying from GitHub)
+# ==========================
+# Uncomment these if you DON'T want to upload models
+# ats_model.pkl
+# tfidf.pkl
+
+# ==========================
+# HuggingFace Cache
+# ==========================
+.cache/
+huggingface/
+sentence_transformers/
+
+# ==========================
+# Node
+# ==========================
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# ==========================
+# Vite
+# ==========================
+frontend/node_modules/.vite/
+dist/
+frontend/dist/
+
+# ==========================
+# VS Code
+# ==========================
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+
+# ==========================
+# OS
+# ==========================
+.DS_Store
+Thumbs.db
+
+# ==========================
+# Logs
+# ==========================
+*.log
+
+# ==========================
+# Temporary Files
+# ==========================
+*.tmp
+*.bak
+*.swp

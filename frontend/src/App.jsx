@@ -131,6 +131,11 @@ const App = () => {
     };
   };
 
+  const resumeInfo = result?.resume || result?.parsed_resume || {};
+  const sectionScores = result?.section_scores || null;
+  const categorizedSkills = result?.skills || null;
+  const suggestions = result?.suggestions || [];
+
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-4xl mx-auto">
@@ -142,11 +147,7 @@ const App = () => {
           <p className="text-lg text-slate-600">
             Intelligent Resume-to-Job matching powered by SBERT & XGBoost
           </p>
-          <div className="mt-4 flex justify-center gap-4">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-              <Zap className="w-3 h-3 mr-1" /> Anti-Gravity Reliability Active
-            </span>
-          </div>
+          
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
@@ -366,6 +367,87 @@ const App = () => {
                       </div>
                     </div>
                   </div>
+
+                  {(resumeInfo.name || resumeInfo.email || resumeInfo.phone) && (
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-200">
+                      {resumeInfo.name && (
+                        <div className="rounded-xl bg-white/70 border border-slate-200 p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Name</p>
+                          <p className="text-sm font-semibold text-slate-800 break-words">{resumeInfo.name}</p>
+                        </div>
+                      )}
+                      {resumeInfo.email && (
+                        <div className="rounded-xl bg-white/70 border border-slate-200 p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Email</p>
+                          <p className="text-sm font-semibold text-slate-800 break-words">{resumeInfo.email}</p>
+                        </div>
+                      )}
+                      {resumeInfo.phone && (
+                        <div className="rounded-xl bg-white/70 border border-slate-200 p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Phone</p>
+                          <p className="text-sm font-semibold text-slate-800 break-words">{resumeInfo.phone}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {sectionScores && (
+                    <div className="mt-8 pt-8 border-t border-slate-200 space-y-4">
+                      <h4 className="flex items-center text-xs font-bold text-slate-700 uppercase tracking-widest">
+                        <FileCode className="w-3 h-3 mr-1" />
+                        Section Scores
+                      </h4>
+                      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+                        {Object.entries(sectionScores).map(([key, value]) => (
+                          <div key={key} className="rounded-xl bg-slate-50 border border-slate-200 p-4 text-center">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2">{key.replace(/_/g, ' ')}</p>
+                            <p className="text-2xl font-black text-slate-800">{value}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {categorizedSkills && (
+                    <div className="mt-8 pt-8 border-t border-slate-200 space-y-4">
+                      <h4 className="flex items-center text-xs font-bold text-slate-700 uppercase tracking-widest">
+                        <Target className="w-3 h-3 mr-1" />
+                        Categorized Skills
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Object.entries(categorizedSkills).map(([category, items]) => (
+                          <div key={category} className="rounded-xl bg-white/70 border border-slate-200 p-4 space-y-3">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">{category.replace(/_/g, ' ')}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {Array.isArray(items) && items.length > 0 ? items.map((skill) => (
+                                <span key={`${category}-${skill}`} className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-100">
+                                  {skill}
+                                </span>
+                              )) : (
+                                <span className="text-slate-400 text-xs italic">None detected.</span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {suggestions.length > 0 && (
+                    <div className="mt-8 pt-8 border-t border-slate-200 space-y-4">
+                      <h4 className="flex items-center text-xs font-bold text-slate-700 uppercase tracking-widest">
+                        <AlertCircle className="w-3 h-3 mr-1" />
+                        Suggestions
+                      </h4>
+                      <div className="space-y-3">
+                        {suggestions.map((item, index) => (
+                          <div key={`${index}-${item}`} className="rounded-xl bg-amber-50 border border-amber-100 p-4 text-sm text-amber-900">
+                            {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -373,7 +455,7 @@ const App = () => {
         </div>
         
         <footer className="mt-12 text-center text-slate-400 text-[10px] font-medium tracking-widest uppercase">
-          Production Environment • Antigravity Reliability Enabled
+          Made with ❤️ by <a href="https://github.com/Siddarthva" className="text-blue-600 hover:underline">Siddarthva</a> 
         </footer>
       </div>
       <style>{`

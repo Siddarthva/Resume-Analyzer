@@ -1,0 +1,74 @@
+{
+  "Languages": [
+    "Python",
+    "Java",
+    "C",
+    "C++",
+    "JavaScript",
+    "TypeScript",
+    "Go",
+    "Rust"
+  ],
+  "Frontend": [
+    "React",
+    "Next.js",
+    "Angular",
+    "Vue",
+    "Tailwind CSS",
+    "HTML",
+    "CSS"
+  ],
+  "Backend": [
+    "Node.js",
+    "Express",
+    "FastAPI",
+    "Django",
+    "Spring Boot"
+  ],
+  "Database": [
+    "MySQL",
+    "PostgreSQL",
+    "MongoDB",
+    "Redis",
+    "SQLite"
+  ],
+  "Cloud": [
+    "AWS",
+    "Azure",
+    "GCP",
+    "Firebase",
+    "Supabase"
+  ],
+  "DevOps": [
+    "Docker",
+    "Kubernetes",
+    "Git",
+    "GitHub Actions",
+    "Jenkins",
+    "Terraform"
+  ],
+  "AI_ML": [
+    "TensorFlow",
+    "PyTorch",
+    "Scikit-learn",
+    "LangChain",
+    "OpenCV",
+    "Hugging Face"
+  ],
+  "Testing": [
+    "Pytest",
+    "Jest",
+    "Cypress",
+    "Playwright",
+    "Selenium",
+    "JUnit"
+  ],
+  "Tools": [
+    "VS Code",
+    "Postman",
+    "Jira",
+    "Figma",
+    "Slack",
+    "Linux"
+  ]
+}

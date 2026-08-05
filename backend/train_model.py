@@ -1,29 +1,22 @@
-# ===============================
-# SIMPLE ATS MODEL TRAINER
-# ===============================
-
 import pandas as pd
 import numpy as np
-import random, re, joblib
+import random, joblib
 import xgboost as xgb
+from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
+from utils.cleaner import clean_text
+
 DATA_PATH = r"C:\Users\Asus\.cache\kagglehub\datasets\snehaanbhawal\resume-dataset\versions\1\Resume\Resume.csv"
+MODEL_DIR = Path(__file__).resolve().parent / "models"
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+MODEL_FILE = MODEL_DIR / "ats_model.pkl"
+TFIDF_FILE = MODEL_DIR / "tfidf.pkl"
 
-MODEL_FILE = "ats_model.pkl"
-TFIDF_FILE = "tfidf.pkl"
-
-# -------------------------
-def clean(t):
-    t = str(t).lower()
-    t = re.sub(r"[^\w\s]", " ", t)
-    return re.sub(r"\s+", " ", t)
-
-# -------------------------
 print("Loading dataset...")
 df = pd.read_csv(DATA_PATH)
 df = df.dropna()
@@ -34,7 +27,7 @@ roles = df["Category"].unique().tolist()
 
 for _,r in df.iterrows():
 
-    resume = clean(r["Resume_str"])
+    resume = clean_text(r["Resume_str"])
     true_role = r["Category"]
 
     if random.random() < 0.5:
